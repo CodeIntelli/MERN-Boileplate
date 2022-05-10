@@ -2,35 +2,35 @@ import { NextFunction, Request, Response } from "express";
 import { userModel } from "../Models";
 import { ErrorHandler, sendEmail, sendToken } from "../Utils";
 
-let NAMESPACE ="";
+let NAMESPACE = "";
 const userController = {
-    async testing(req:Request,res:Response,next:NextFunction){
-        NAMESPACE = "Registration";
-        res.status(200).json({"message":"Your Controller Connected"})
-    },
-    async getUserDetails(req:Request, res:Response, next:NextFunction) {
+  async testing(req: Request, res: Response, next: NextFunction) {
+    NAMESPACE = "Registration";
+    res.status(200).json({ "message": "Your Controller Connected" })
+  },
+  async getUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
-        //@ts-ignore
+      //@ts-ignore
       const user = await userModel.findById(req.user.id);
       res.status(200).json({ success: true, user });
-    } catch (error:any) {
+    } catch (error: any) {
       res.status(500).json({ success: false, message: error.message });
     }
   },
-  async getAllUserDetails(req:Request, res:Response, next:NextFunction) {
+  async getAllUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const users = await userModel.find();
       res.status(200).json({ success: true, users });
-    } catch (error:any) {
+    } catch (error: any) {
       res.status(500).json({ success: false, message: error.message });
     }
   },
   // if authenticated
-  async updatePassword(req:Request, res:Response, next:NextFunction) {
+  async updatePassword(req: Request, res: Response, next: NextFunction) {
     try {
-        // @ts-ignore
-        const user = await userModel.findById(req.user.id).select("+password");
-        // @ts-ignore
+      // @ts-ignore
+      const user = await userModel.findById(req.user.id).select("+password");
+      // @ts-ignore
       const isPasswordMatched = await user.comparePassword(
         req.body.oldPassword
       );
@@ -44,21 +44,22 @@ const userController = {
       //@ts-ignore
 
       user.password = req.body.newPassword;
+      //@ts-ignore
       await user.save();
       sendToken(user, 200, res);
       res.status(200).json({ success: true, user });
-    } catch (error:any) {
+    } catch (error: any) {
       return new ErrorHandler(error, 500);
     }
   },
   // get single user - admin
-  async getSingleUser(req:Request, res:Response, next:NextFunction) {
+  async getSingleUser(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await userModel.findById(req.params.id);
 
       if (!user) {
         return next(
-          new ErrorHandler(`User does not exist with Id: ${req.params.id}`)
+          new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 404)
         );
       }
 
@@ -66,11 +67,11 @@ const userController = {
         success: true,
         user,
       });
-    } catch (error:any) {
+    } catch (error: any) {
       return new ErrorHandler(error, 500);
     }
   },
-  async updateUserRole(req:Request, res:Response, next:NextFunction) {
+  async updateUserRole(req: Request, res: Response, next: NextFunction) {
     try {
       const newUserData = {
         name: req.body.name,
@@ -87,36 +88,40 @@ const userController = {
       res.status(200).json({
         success: true,
       });
-    } catch (error:any) {
+    } catch (error: any) {
       return new ErrorHandler(error, 500);
     }
   },
 
-  async updateUserDetails(req:Request, res:Response, next:NextFunction) {
+  async updateUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const newUserData = {
         name: req.body.name,
         email: req.body.email,
       };
       if (req.body.avatar !== "") {
+        //@ts-ignore
         const user = await userModel.findById(req.user.id);
 
+        //@ts-ignore
         const imageId = user.avatar.public_id;
 
+        //@ts-ignore
         await cloudinary.v2.uploader.destroy(imageId);
 
+        //@ts-ignore
         const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
           folder: "avatars",
           width: 150,
           crop: "scale",
         });
-
+        //@ts-ignore
         newUserData.avatar = {
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
         };
       }
-
+      //@ts-ignore
       const user = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
         new: true,
         runValidators: true,
@@ -128,12 +133,12 @@ const userController = {
       });
 
       next();
-    } catch (error:any) {
+    } catch (error: any) {
       return new ErrorHandler(error, 500);
     }
   },
 
-  async deleteUser(req:Request, res:Response, next:NextFunction) {
+  async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await userModel.findById(req.params.id);
 
@@ -149,7 +154,7 @@ const userController = {
         success: true,
         message: "User Deleted Successfully",
       });
-    } catch (error:any) {
+    } catch (error: any) {
       return new ErrorHandler(error, 500);
     }
   },

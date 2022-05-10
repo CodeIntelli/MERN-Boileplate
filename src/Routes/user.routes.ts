@@ -1,6 +1,6 @@
-import express,{Request,Response,NextFunction} from "express";
-import {userController} from "../Controller";
-import { isAuthenticatedUser } from "../Middleware/authorization";
+import express, { Request, Response, NextFunction } from "express";
+import { userController } from "../Controller";
+import { isAuthenticatedUser, authorizationRoles } from "../Middleware/authorization";
 
 const userRoutes = express.Router();
 userRoutes.get("/profile", isAuthenticatedUser, userController.getUserDetails);
