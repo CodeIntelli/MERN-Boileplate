@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { JWT_EXPIRE, JWT_SECRET } from "../../Config";
-import {userModelInterface} from '../Interfaces';
+import { userModelInterface } from '../Interfaces';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -23,21 +23,37 @@ const userSchema = new mongoose.Schema({
     minLength: [4, "Password should not be greater than 4 characters"],
     select: false,
   },
-  avatar: {
-    public_id: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
-  },
-
   role: {
     type: String,
     default: "user",
   },
+
+  avatar: {
+    type: String,
+  },
+
+  verified: {
+    type: Boolean,
+    default: "false"
+  },
+
+  status: {
+    type: String,
+    default: "Active"
+  },
+
+  userIp: {
+    type: String,
+    required: true,
+    default: "0.0.0.0"
+  },
+
+  userLocation: {
+    type: String,
+    required: true,
+    default: "Some Location"
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -64,7 +80,7 @@ userSchema.methods.getJWTToken = function () {
 };
 
 // Compare Password
-userSchema.methods.comparePassword = async function (candidatePassword:string) {
+userSchema.methods.comparePassword = async function (candidatePassword: string) {
   let userpass = this as userModelInterface;
   return await bcrypt.compare(candidatePassword, userpass.password);
 };
@@ -73,7 +89,7 @@ userSchema.methods.comparePassword = async function (candidatePassword:string) {
 userSchema.methods.getResetPasswordToken = function () {
   // Generating Token
   const resetToken = crypto.randomBytes(20).toString("hex");
-  
+
   this.resetPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)

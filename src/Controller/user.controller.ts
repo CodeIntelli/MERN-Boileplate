@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { userModel } from "../Models";
 import { ErrorHandler, sendEmail, sendToken } from "../Utils";
+import { awsconf } from "../Utils/";
 
 let NAMESPACE = "";
 const userController = {
@@ -158,6 +159,11 @@ const userController = {
       return new ErrorHandler(error, 500);
     }
   },
+
+
+  async setProfile(req: Request, res: Response) {
+    console.log(123456)
+  }
 };
 
 export default userController;

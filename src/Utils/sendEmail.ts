@@ -8,24 +8,25 @@ import {
 } from "../../Config";
 import ErrorHandler from "./ErrorHandler";
 
-const sendEmail = async (options:any) => {
+const sendEmail = async (options: any) => {
   //   const accessToken = await OAuth2Client.getAccessToken();
   try {
-      let host= SMTP_HOST as any;
-let port= SMTP_PORT as any;
-let service= SMTP_SERVICE as any;
-let user= SMTP_MAIL as any;
-let pass= SMTP_PASS as any;
+    // let host = SMTP_HOST as any;
+    let port = SMTP_PORT as any;
+    let service = SMTP_SERVICE as any;
+    let user = SMTP_MAIL as any;
+    let pass = SMTP_PASS as any;
     const transporter = nodeMailer.createTransport({
-      host,
-      port,
       service,
       secure: false,
-      requireTLS: true,
+      port,
       auth: {
         user,
         pass,
       },
+      tls: {
+        rejectUnauthorized: false
+      }
     });
     const mailOptions = {
       from: user,
@@ -34,7 +35,7 @@ let pass= SMTP_PASS as any;
       text: options.message,
     };
     return await transporter.sendMail(mailOptions);
-  } catch (error:any) {
+  } catch (error: any) {
     return new ErrorHandler(error.message, 500);
   }
 
