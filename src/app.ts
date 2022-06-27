@@ -8,15 +8,13 @@ import cors from "cors";
 import errorDetails from "./Middleware/error";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import fileUpload from "express-fileupload";
-import cloudinary from "cloudinary";
+
 const app = express();
 const NAMESPACE = "SERVER";
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
-app.use(fileUpload({ useTempFiles: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/api/v1', userRoutes);

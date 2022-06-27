@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { userModel } from "../Models";
 import { ErrorHandler, sendEmail, sendToken } from "../Utils";
-import { awsconf } from "../Utils/";
+import { uploadFile } from "../Utils/s3"
+import { AWS_BUCKET } from "../../Config";
 
 let NAMESPACE = "";
 const userController = {
@@ -162,7 +163,14 @@ const userController = {
 
 
   async setProfile(req: Request, res: Response) {
-    console.log(123456)
+    debugger
+    try {
+      const file = req.file;
+      const result = await uploadFile(file);
+      res.json({ filePath: `${result.Key}` });
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 
