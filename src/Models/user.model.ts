@@ -54,6 +54,10 @@ const userSchema = new mongoose.Schema({
     default: "Some Location"
   },
 
+  profile: {
+    type: String,
+    default:"https://img.favpng.com/2/12/12/computer-icons-portable-network-graphics-user-profile-avatar-png-favpng-L1ihcbxsHbnBKBvjjfBMFGbb7.jpg"
+  },
   createdAt: {
     type: Date,
     default: Date.now,

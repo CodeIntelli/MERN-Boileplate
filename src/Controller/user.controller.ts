@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { userModel } from "../Models";
 import { ErrorHandler, sendEmail, sendToken } from "../Utils";
-import { uploadFile } from "../Utils/s3"
-import { AWS_BUCKET } from "../../Config";
+import { getSignedUrl, uploadFile } from "../Utils/s3"
 
 let NAMESPACE = "";
 const userController = {
@@ -12,6 +11,7 @@ const userController = {
   },
   async getUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
+
       //@ts-ignore
       const user = await userModel.findById(req.user.id);
       res.status(200).json({ success: true, user });
@@ -73,6 +73,7 @@ const userController = {
       return new ErrorHandler(error, 500);
     }
   },
+
   async updateUserRole(req: Request, res: Response, next: NextFunction) {
     try {
       const newUserData = {
@@ -163,13 +164,44 @@ const userController = {
 
 
   async setProfile(req: Request, res: Response) {
-    debugger
+
     try {
       const file = req.file;
       const result = await uploadFile(file);
-      res.json({ filePath: `${result.Key}` });
+      const profile = {
+        profile: result.Key
+      }
+
+      // @ts-ignore
+      await userModel.findByIdAndUpdate(req.user._id, profile, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
+      });
+      return res.json({
+        filePath: `${result.Key}`,
+        Location: `${result.Location}`
+      });
     } catch (err) {
       console.log(err);
+    }
+  },
+
+  async userProfile(req: Request, res: Response) {
+    console.log(req.params.key)
+    try {
+      const key = req.params.key;
+      if (!key) {
+        return new ErrorHandler("your key is invalid", 400)
+      }
+      const result = await getSignedUrl(key);
+      return res.json({
+        success: true,
+        data: result
+      })
+    }
+    catch (error) {
+      return new ErrorHandler(error, 500)
     }
   }
 };

@@ -3,10 +3,39 @@ import { userController } from "../Controller";
 import { isAuthenticatedUser, authorizationRoles } from "../Middleware/authorization";
 import multer from "multer";
 
-const upload = multer({ dest: "src/uploads/" });
+// * defined filter
+const fileFilter = (req: Request, file: any, cb: any) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg' ||
+    file.mimetype === 'image/webp' ||
+    file.mimetype === 'image/svg+xml' ||
+    file.mimetype === 'image/gif' ||
+    file.mimetype === 'image/avif' ||
+    file.mimetype === 'image/apng' ||
+    file.mimetype === 'application/octet-stream'
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error('File format should be PNG,JPG,JPEG,WEBP,SVG,XML,GIF,AVIF & APNG'), false); // if validation failed then generate error
+  }
+};
+
+// *file upload using validation
+const upload = multer({
+  dest: "src/uploads/",
+  fileFilter: fileFilter
+});
 const userRoutes = express.Router();
 
 userRoutes.get("/profile", isAuthenticatedUser, userController.getUserDetails);
+userRoutes.get(
+  "/userProfile/:id",
+  isAuthenticatedUser,
+  userController.userProfile
+);
+
 userRoutes.put(
   "/changePassword",
   isAuthenticatedUser,
@@ -18,7 +47,7 @@ userRoutes.put(
   isAuthenticatedUser,
   userController.updateUserDetails
 );
-userRoutes.post("/setProfile", isAuthenticatedUser, upload.single('profile'), userController.setProfile);
+userRoutes.put("/setProfile", isAuthenticatedUser, upload.single('profile'), userController.setProfile);
 
 // admin
 userRoutes.get(

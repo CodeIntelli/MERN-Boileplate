@@ -22,6 +22,7 @@ const isAuthenticatedUser = async (req: Request, res: Response, next: NextFuncti
     const decodeData = jwt.verify(token, secret);
     //@ts-ignore
     req.user = await userModel.findById(decodeData.id);
+    // @ts-ignore
     next();
   } catch (error) {
     return next(new ErrorHandler(error, 401));
