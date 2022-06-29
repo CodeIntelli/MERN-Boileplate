@@ -4,11 +4,10 @@ import { ErrorHandler } from "../Utils";
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 
-const isAuthenticatedUser = async (req:Request, res:Response, next: NextFunction) => {
-    let secret = JWT_SECRET as string;
+const isAuthenticatedUser = async (req: Request, res: Response, next: NextFunction) => {
+  let secret = JWT_SECRET as string;
   try {
     let authToken = req.headers.authorization;
-
     if (!authToken) {
       console.log("token not found");
       return next(
@@ -23,15 +22,16 @@ const isAuthenticatedUser = async (req:Request, res:Response, next: NextFunction
     const decodeData = jwt.verify(token, secret);
     //@ts-ignore
     req.user = await userModel.findById(decodeData.id);
+    // @ts-ignore
     next();
   } catch (error) {
     return next(new ErrorHandler(error, 401));
   }
 };
 
-const authorizationRoles = (...roles:any) => {
-  return (req:Request, res:Response, next: NextFunction) => {
-      //@ts-ignore
+const authorizationRoles = (...roles: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    //@ts-ignore
     if (!roles.includes(req.user.role)) {
       return next(
         new ErrorHandler(
