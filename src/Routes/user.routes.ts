@@ -30,12 +30,7 @@ const upload = multer({
 const userRoutes = express.Router();
 
 userRoutes.get("/profile", isAuthenticatedUser, userController.getUserDetails);
-userRoutes.get(
-  "/userProfile/:id",
-  isAuthenticatedUser,
-  userController.userProfile
-);
-
+userRoutes.get("/getProfle/:id", isAuthenticatedUser, userController.getProfile);
 userRoutes.put(
   "/changePassword",
   isAuthenticatedUser,

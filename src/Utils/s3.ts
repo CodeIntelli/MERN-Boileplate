@@ -27,7 +27,7 @@ const uploadFile = (file: any) => {
 
 // @Service : GetSignedURL
 const getSignedUrl = async (fileKey: any) => {
-    console.log(fileKey)
+    // console.log(fileKey)
     const signedUrlExpireSeconds = 18000;
     try {
         const url = s3.getSignedUrl("getObject", {

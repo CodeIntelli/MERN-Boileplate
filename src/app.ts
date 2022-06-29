@@ -3,7 +3,6 @@ import Logger from "../Config/Logger";
 import "./Database";
 import { PORT } from "../Config";
 import { authenticationRoutes, userRoutes } from "./Routes";
-import { CLOUD_NAME, CLOUD_API_KEY, CLOUD_API_SECRET } from "../Config";
 import cors from "cors";
 import errorDetails from "./Middleware/error";
 import cookieParser from "cookie-parser";

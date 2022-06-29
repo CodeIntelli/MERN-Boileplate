@@ -146,11 +146,6 @@ const authorizationController = {
     }
   },
 
-  async profile(req: Request, res: Response, next: NextFunction)
-  {
-      
-  },
-
   async forgotPassword(req: Request, res: Response, next: NextFunction) {
     NAMESPACE = "Forgot Password";
     const user = await userModel.findOne({ email: req.body.email });

@@ -11,7 +11,7 @@ const userController = {
   },
   async getUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
-
+      console.log(req)
       //@ts-ignore
       const user = await userModel.findById(req.user.id);
       res.status(200).json({ success: true, user });
@@ -162,7 +162,6 @@ const userController = {
     }
   },
 
-
   async setProfile(req: Request, res: Response) {
 
     try {
@@ -187,21 +186,19 @@ const userController = {
     }
   },
 
-  async userProfile(req: Request, res: Response) {
-    console.log(req.params.key)
+  async getProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      const key = req.params.key;
+      const key = req.params.id;
       if (!key) {
-        return new ErrorHandler("your key is invalid", 400)
+        new ErrorHandler("please provide valid key", 402)
       }
       const result = await getSignedUrl(key);
       return res.json({
         success: true,
         data: result
       })
-    }
-    catch (error) {
-      return new ErrorHandler(error, 500)
+    } catch (err) {
+      new ErrorHandler(err, 500)
     }
   }
 };
