@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { userModel, tokenModel } from "../Models";
 import Joi from "joi";
-import { ErrorHandler, sendEmail, sendToken } from "../Utils";
+import { ErrorHandler, SendEmail, SendToken } from "../Utils";
 import { FRONTEND_URL, LOGIN_URL } from "../../Config";
 import crypto from "crypto";
 import Logger from "../../Config/Logger";
@@ -55,7 +55,7 @@ const authorizationController = {
 
         const message = `${FRONTEND_URL}/${user._id}/verify/${token.token}`;
 
-        const sendVerifyMail = await sendEmail({
+        const sendVerifyMail = await SendEmail({
           email: user.email,
           subject: `${user.name} verification link`,
           message,
@@ -139,7 +139,7 @@ const authorizationController = {
         .select("-password");
       // const token = user.getJWTToken();
       // res.json({mesaage:message})
-      sendToken(user, 200, res);
+      SendToken(user, 200, res);
     } catch (error: any) {
       console.log(error)
       return next(new ErrorHandler(error, 500));
@@ -161,7 +161,7 @@ const authorizationController = {
     const message = `Your password reset token is:- ${resetPasswordUrl} \n\n If you have not requested this email then please ignore it\n\n `;
 
     try {
-      await sendEmail({
+      await SendEmail({
         email: user.email,
         subject: `${user.name} Password Recovery`,
         message,
@@ -205,7 +205,7 @@ const authorizationController = {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save();
-      sendToken(user, 200, res);
+      SendToken(user, 200, res);
     } catch (error: any) {
       return next(new ErrorHandler(error, 500));
     }

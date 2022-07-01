@@ -20,5 +20,5 @@ export const {
   AWS_BUCKET,
   AWS_ACCESS_KEY,
   AWS_SECRET_ACCESS_KEY,
-  AWS_REGION
-} = process.env;
+  AWS_REGION,
+  ENC_DEC_KEY} = process.env;

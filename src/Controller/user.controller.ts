@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { userModel } from "../Models";
-import { ErrorHandler, sendEmail, sendToken } from "../Utils";
-import { getSignedUrl, uploadFile } from "../Utils/s3"
+import { ErrorHandler, SendEmail, SendToken } from "../Utils";
+import { getSignedUrl, uploadFile } from "../Utils/AWSUpload"
 
 let NAMESPACE = "";
 const userController = {
@@ -48,7 +48,7 @@ const userController = {
       user.password = req.body.newPassword;
       //@ts-ignore
       await user.save();
-      sendToken(user, 200, res);
+      SendToken(user, 200, res);
       res.status(200).json({ success: true, user });
     } catch (error: any) {
       return new ErrorHandler(error, 500);

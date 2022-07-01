@@ -1,4 +1,4 @@
-import { JWT_SECRET } from "../../Config";
+                              import { JWT_SECRET } from "../../Config";
 import { userModel } from "../Models";
 import { ErrorHandler } from "../Utils";
 import jwt from "jsonwebtoken";
@@ -7,7 +7,7 @@ import { NextFunction, Request, Response } from "express";
 const isAuthenticatedUser = async (req: Request, res: Response, next: NextFunction) => {
   let secret = JWT_SECRET as string;
   try {
-    let authToken = req.headers.authorization;
+    let authToken = req.headers.authorization || req.cookies.token;
     if (!authToken) {
       console.log("token not found");
       return next(
@@ -29,19 +29,5 @@ const isAuthenticatedUser = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-const authorizationRoles = (...roles: any) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    //@ts-ignore
-    if (!roles.includes(req.user.role)) {
-      return next(
-        new ErrorHandler(
-          `You are not allowed to access this resources`,
-          403
-        )
-      );
-    }
-    next();
-  };
-};
 
-export { isAuthenticatedUser, authorizationRoles };
+export default isAuthenticatedUser;
